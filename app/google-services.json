@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "230482003576",
+    "project_id": "musiccloud-b8cd3",
+    "storage_bucket": "musiccloud-b8cd3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:230482003576:android:5008517d6013ce93c70f8d",
+        "android_client_info": {
+          "package_name": "edu.neu.madcourse.musicclouddashboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "230482003576-iufetj1rgsolgvkfqdqh3t38fd20ancg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCuCoa_dH_ynLrLlVLM7BJzoWsHAXQhMmk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "230482003576-iufetj1rgsolgvkfqdqh3t38fd20ancg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
