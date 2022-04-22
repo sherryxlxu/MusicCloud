@@ -1,12 +1,16 @@
 package edu.neu.madcourse.musicloud;
 
+import android.widget.Button;
+
 public class Posts {
-    private Integer id;
+    private String id;
     private String title;
     private String subContent;
     private Integer image;
 
-    public Posts(Integer id, String title, String subContent, Integer image){
+
+
+    public Posts(String  id, String title, String subContent, Integer image){
         this.id = id;
         this.title = title;
         this.subContent=subContent;
@@ -18,7 +22,7 @@ public class Posts {
         return this.subContent;
     }
 
-    public Integer getId() {
+    public String getId() {
         return this.id;
     }
 

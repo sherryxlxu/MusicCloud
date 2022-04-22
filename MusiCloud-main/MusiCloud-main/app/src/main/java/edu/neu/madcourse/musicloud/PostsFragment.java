@@ -1,20 +1,31 @@
 package edu.neu.madcourse.musicloud;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+
+import edu.neu.madcourse.musicloud.comments.Comment;
 
 
 public class PostsFragment extends Fragment {
@@ -27,18 +38,49 @@ public class PostsFragment extends Fragment {
     private View view;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
+    private DatabaseReference commentDatabase;
     private User user;
     private DataSnapshot dataSnapshot;
+    private ArrayList<Comment> commentArrayList = new ArrayList<>();
+    private Button playButton, pauseButton;
+    private MediaPlayer mediaPlayer;
+    private ImageView songImage;
+    private TextView songTitle;
+    private TextView songArtist;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-//        databaseReference = firebaseDatabase.getReference("https://console.firebase.google.com/u/0/project/musicloud-28210/database/musicloud-28210-default-rtdb/data/~2Fposts~2F-Mzxvh57q8aioVtBv8VZ");
-//        databaseReference.child("users").child("TestUser").child("comments").child("-N0-0REC0W-8KDL6z4Uh").child("user").addValueEventListener(new ValueEventListener() {
+
+        user = MainActivity.currentUser;
+        Log.e("Username:",user.getUsername());
+        String username = user.getUsername();
+        //set up database
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+        commentDatabase = databaseReference.child("users").child(username).child("comments");
+        getComment(new ListCallBack() {
+                       @Override
+                       public void ListCallBack(ArrayList<Comment> commentArrayList, ArrayList<Posts> postsArrayList) {
+                           recyclerViewAdapter.setItems(postsArrayList);
+
+
+                       }
+                   });
+//        commentDatabase.addValueEventListener(new ValueEventListener() {
 //            @Override
 //            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                user = new User();
-//                user = dataSnapshot.getValue(User.class);
+//                int count = Math.toIntExact(snapshot.getChildrenCount());
+//                Log.e("Children count: ", String.valueOf(count));
+//                for(DataSnapshot dataSnapshot1:snapshot.getChildren()){
+//                    Comment comment = dataSnapshot1.getValue(Comment.class);
+//                    if (comment == null){
+//                        Log.e("Comment:","null");
+//                    }
+//                    commentArrayList.add(comment);
+//
+//
+//                }
+//
 //
 //            }
 //
@@ -47,41 +89,131 @@ public class PostsFragment extends Fragment {
 //
 //            }
 //        });
-//        databaseReference.child("users").child("TestUser").child("comments").child("-N0-0REC0W-8KDL6z4Uh").child("postId").addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                String postId = dataSnapshot.getValue(String.class);
-//            }
+//        int id = 0;
+//        for(Comment comment: commentArrayList){
+//            Log.e("Comment:",comment.getContent());
+//            postsArrayList.add(new Posts(id,"The Weekend",comment.getContent(), R.drawable.cat));
+//            id+=1;
 //
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
+//        }
 
+                // Inflate the layout for this fragment
 
-        // Inflate the layout for this fragment
-        addPosts();
         view = inflater.inflate(R.layout.fragment_posts, container, false);
+//        playButton = view.findViewById(R.id.playButton);
+//        pauseButton = view.findViewById(R.id.pauseButton);
+        //media player
+
+//        songImage = view.findViewById(R.id.songImg);
+//        songTitle = view.findViewById(R.id.songTitle);
+//        songArtist=view.findViewById(R.id.songArtist);
+
         recyclerView = view.findViewById(R.id.recycler_view);
         rLayoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(rLayoutManager);
         recyclerView.setHasFixedSize(false);
-
+//        Log.e("pa:",String.valueOf(postsArrayList.size()));
         recyclerViewAdapter = new RecyclerviewAdapter(postsArrayList);
         recyclerView.setAdapter(recyclerViewAdapter);
-        recyclerView.setLayoutManager(rLayoutManager);
+        recyclerView.setLayoutManager(new GridLayoutManager(view.getContext(),2));
+
+//        mediaPlayer = new MediaPlayer();
+//        // Set up Media Player
+//        mediaPlayer.setAudioAttributes(
+//                new AudioAttributes.Builder()
+//                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+//                        .setUsage(AudioAttributes.USAGE_MEDIA)
+//                        .build()
+//        );
+//        playButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (!mediaPlayer.isPlaying()) {
+//                    playButton.setVisibility(View.GONE);
+//                    pauseButton.setVisibility(View.VISIBLE);
+//                    mediaPlayer.start();
+//                } else {
+//                    playButton.setVisibility(View.VISIBLE);
+//                    pauseButton.setVisibility(View.GONE);
+//                    mediaPlayer.pause();
+//                }
+//            }
+//        });
+//
+//        pauseButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (!mediaPlayer.isPlaying()) {
+//                    playButton.setVisibility(View.GONE);
+//                    pauseButton.setVisibility(View.VISIBLE);
+//                    mediaPlayer.start();
+//                } else {
+//                    playButton.setVisibility(View.VISIBLE);
+//                    pauseButton.setVisibility(View.GONE);
+//                    mediaPlayer.pause();
+//                }
+//            }
+//        });
+//
+//        WebServiceExecutor webServiceExecutor = new WebServiceExecutor();
+//        webServiceExecutor.execute(new FetchTrackTask(getActivity(), mediaPlayer,songImage,songTitle,songArtist));
         return view;
+
+    }
+    //according to current user fetch comment id and comment content
+    private void getPostId(User user){
+
+    }
+    private void getComment(ListCallBack callBack){
+        commentDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int count = Math.toIntExact(snapshot.getChildrenCount());
+                Log.e("Children count: ", String.valueOf(count));
+                for(DataSnapshot dataSnapshot1:snapshot.getChildren()){
+                    Comment comment = dataSnapshot1.getValue(Comment.class);
+                    if (comment == null){
+                        Log.e("Comment:","null");
+                    }
+                    commentArrayList.add(comment);
+                }
+                addPosts(commentArrayList,postsArrayList);
+                callBack.ListCallBack(commentArrayList,postsArrayList);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
     }
 
 
 
-    private void addPosts(){
-        postsArrayList.add(new Posts(0,"The Weekend","Great!",R.drawable.anon));
-        postsArrayList.add(new Posts(1,"avril","Nice",R.drawable.cat));
-        postsArrayList.add(new Posts(2,"index","Boring",R.drawable.ic_baseline_arrow_back_24));
-        postsArrayList.add(new Posts(3,"plain","Nothing",R.drawable.ic_baseline_menu_24));
+    private void addPosts(ArrayList<Comment> commentArrayList,ArrayList<Posts>postsArrayList){
+        if(commentArrayList!=null && commentArrayList.size()!=0)
+        {
+            for(Comment comment: commentArrayList){
+            Log.e("Comment :",comment.getContent());
+            Log.e("Comment ID:",comment.getId());
+            postsArrayList.add(new Posts(comment.getId(),"The Weekend",comment.getContent(), R.drawable.cat));
+
+        }
+
+//        Log.e("Comment size2:",String.valueOf(commentArrayList.size()));
+//        for(Comment comment: commentArrayList){
+//            Log.e("Comment:",comment.getContent());
+//            postsArrayList.add(new Posts(0,"The Weekend",comment.getContent(), R.drawable.cat));
+//
+//        }
+//        postsArrayList.add(new Posts(0,"The Weekend","Great!",R.drawable.anon));
+//        postsArrayList.add(new Posts(1,"avril","Nice",R.drawable.cat));
+//        postsArrayList.add(new Posts(2,"index","Boring",R.drawable.ic_baseline_arrow_back_24));
+//        postsArrayList.add(new Posts(3,"plain","Nothing",R.drawable.ic_baseline_menu_24));
+    }
     }
 
 

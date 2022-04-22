@@ -1,5 +1,7 @@
 package edu.neu.madcourse.musicloud;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +16,14 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
 
     public RecyclerviewAdapter(ArrayList<Posts> postsArrayList){
         this.postsArrayList = postsArrayList;
+    }
+    @SuppressLint("NotifyDataSetChanged")
+    public ArrayList<Posts> setItems(ArrayList<Posts> arrayList){
+        if(postsArrayList!=null){
+            this.postsArrayList = arrayList;
+            notifyDataSetChanged();
+        }
+        return this.postsArrayList;
     }
     @NonNull
     @Override
@@ -30,6 +40,15 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         holder.postsTitle.setText(post.getTitle());
         holder.subContent.setText(post.getSubContent());
         holder.imageView.setImageResource(post.getImage());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(),PostActivity.class);
+                intent.putExtra("postId",holder.id);
+                view.getContext().startActivity(intent);
+            }
+        });
 
     }
 
