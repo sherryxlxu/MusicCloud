@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         holder.setId(post.getId());
         holder.postsTitle.setText(post.getTitle());
         holder.subContent.setText(post.getSubContent());
-        holder.imageView.setImageResource(post.getImage());
+        holder.imageView.setImageDrawable(ContextCompat.getDrawable(holder.imageView.getContext(),post.getImage()));
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

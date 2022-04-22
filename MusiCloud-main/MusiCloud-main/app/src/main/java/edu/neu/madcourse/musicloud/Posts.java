@@ -1,16 +1,17 @@
 package edu.neu.madcourse.musicloud;
 
-import android.widget.Button;
+import android.graphics.drawable.Drawable;
+import android.widget.ImageView;
 
 public class Posts {
     private String id;
     private String title;
     private String subContent;
-    private Integer image;
+    private Drawable image;
 
 
 
-    public Posts(String  id, String title, String subContent, Integer image){
+    public Posts(String  id, String title, String subContent, Drawable image){
         this.id = id;
         this.title = title;
         this.subContent=subContent;
@@ -26,7 +27,7 @@ public class Posts {
         return this.id;
     }
 
-    public Integer getImage() {
+    public Drawable getImage() {
         return this.image;
     }
 

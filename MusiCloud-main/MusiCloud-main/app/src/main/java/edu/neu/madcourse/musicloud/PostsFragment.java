@@ -1,5 +1,6 @@
 package edu.neu.madcourse.musicloud;
 
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+
 
 import java.util.ArrayList;
 
@@ -39,6 +42,7 @@ public class PostsFragment extends Fragment {
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private DatabaseReference commentDatabase;
+    private DatabaseReference postDatabase;
     private User user;
     private DataSnapshot dataSnapshot;
     private ArrayList<Comment> commentArrayList = new ArrayList<>();
@@ -48,9 +52,12 @@ public class PostsFragment extends Fragment {
     private TextView songTitle;
     private TextView songArtist;
 
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
 
         user = MainActivity.currentUser;
         Log.e("Username:",user.getUsername());
@@ -58,6 +65,7 @@ public class PostsFragment extends Fragment {
         //set up database
         databaseReference = FirebaseDatabase.getInstance().getReference();
         commentDatabase = databaseReference.child("users").child(username).child("comments");
+        postDatabase = databaseReference.child("posts");
         getComment(new ListCallBack() {
                        @Override
                        public void ListCallBack(ArrayList<Comment> commentArrayList, ArrayList<Posts> postsArrayList) {
@@ -100,6 +108,9 @@ public class PostsFragment extends Fragment {
                 // Inflate the layout for this fragment
 
         view = inflater.inflate(R.layout.fragment_posts, container, false);
+//        songImage = view.findViewById(R.id.songImg);
+//        songTitle = view.findViewById(R.id.songTitle);
+
 //        playButton = view.findViewById(R.id.playButton);
 //        pauseButton = view.findViewById(R.id.pauseButton);
         //media player
@@ -194,14 +205,44 @@ public class PostsFragment extends Fragment {
 
 
     private void addPosts(ArrayList<Comment> commentArrayList,ArrayList<Posts>postsArrayList){
-        if(commentArrayList!=null && commentArrayList.size()!=0)
-        {
-            for(Comment comment: commentArrayList){
-            Log.e("Comment :",comment.getContent());
-            Log.e("Comment ID:",comment.getId());
-            postsArrayList.add(new Posts(comment.getId(),"The Weekend",comment.getContent(), R.drawable.cat));
+        if(commentArrayList!=null && commentArrayList.size()!=0) {
+            for (Comment comment : commentArrayList) {
+                Log.e("Comment :", comment.getContent());
+                Log.e("Comment ID:", comment.getId());
+                String id = comment.getId();
+                getSongInfo(new itemCallBack() {
+                    @Override
+                    public void songCallBack(String title, String image) {
+                        Picasso.get().load(image).into(songImage);
 
+                        postsArrayList.add(new Posts(comment.getId(), title, comment.getContent(), songImage));
+
+
+
+                    }
+                });
+
+
+
+            }
         }
+    }
+    private void getSongInfo(itemCallBack callBack){
+        postDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                Song song = snapshot.child("id").getValue(Song.class);
+                callBack.songCallBack(song.getTitle(),song.getImg());
+
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
 
 //        Log.e("Comment size2:",String.valueOf(commentArrayList.size()));
 //        for(Comment comment: commentArrayList){
@@ -214,7 +255,7 @@ public class PostsFragment extends Fragment {
 //        postsArrayList.add(new Posts(2,"index","Boring",R.drawable.ic_baseline_arrow_back_24));
 //        postsArrayList.add(new Posts(3,"plain","Nothing",R.drawable.ic_baseline_menu_24));
     }
-    }
+
 
 
 
