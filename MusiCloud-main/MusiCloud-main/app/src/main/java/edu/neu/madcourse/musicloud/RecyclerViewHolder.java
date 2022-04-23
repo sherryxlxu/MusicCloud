@@ -18,16 +18,16 @@ public class RecyclerViewHolder extends RecyclerView.ViewHolder{
     public TextView postsTitle;
     public TextView subContent;
     public String id;
-    public Button playButton,pauseButton;
-    public MediaPlayer mediaPlayer;
+//    public Button playButton,pauseButton;
+//    public MediaPlayer mediaPlayer;
 
     public RecyclerViewHolder(@NonNull View itemView) {
         super(itemView);
         this.imageView = itemView.findViewById(R.id.songImg);
         this.postsTitle = itemView.findViewById(R.id.songTitle);
         this.subContent = itemView.findViewById(R.id.songArtist);
-        this.playButton = itemView.findViewById(R.id.playButton);
-        this.pauseButton = itemView.findViewById(R.id.pauseButton);
+//        this.playButton = itemView.findViewById(R.id.playButton);
+//        this.pauseButton = itemView.findViewById(R.id.pauseButton);
 
 
     }

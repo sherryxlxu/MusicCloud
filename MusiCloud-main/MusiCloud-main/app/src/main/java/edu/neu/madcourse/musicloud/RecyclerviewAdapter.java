@@ -2,6 +2,7 @@ package edu.neu.madcourse.musicloud;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,9 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -40,7 +44,9 @@ public class RecyclerviewAdapter extends RecyclerView.Adapter<RecyclerViewHolder
         holder.setId(post.getId());
         holder.postsTitle.setText(post.getTitle());
         holder.subContent.setText(post.getSubContent());
-        holder.imageView.setImageDrawable(ContextCompat.getDrawable(holder.imageView.getContext(),post.getImage()));
+//        Glide.with(holder.imageView.getContext()).load(post.getImage()).into(holder.imageView);
+        Log.d("ImageUrl",post.getImage());
+        Picasso.get().load(post.getImage()).into(holder.imageView);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

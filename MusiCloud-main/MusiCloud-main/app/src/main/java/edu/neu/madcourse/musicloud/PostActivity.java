@@ -1,9 +1,12 @@
 package edu.neu.madcourse.musicloud;
 
+import static android.graphics.Color.*;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -70,6 +73,7 @@ public class PostActivity extends AppCompatActivity {
     private DatabaseReference postDbReference;
     private DatabaseReference commentsDbReference;
     private DatabaseReference personalReference;
+    private DatabaseReference likesReference;
     private ValueEventListener postValueEventListener;
     private ChildEventListener commentsChildEventListener;
 
@@ -103,6 +107,7 @@ public class PostActivity extends AppCompatActivity {
     private PrettyTime p;
     private ImageButton menu;
     private final String POSTID = "-Mzxvh57q8aioVtBv8VZ";
+    private boolean res = true;
 //    private DrawerLayout drawerLayout;
 //    private ActionBarDrawerToggle toggle;
 //    private NavigationView navigationView;
@@ -166,6 +171,7 @@ public class PostActivity extends AppCompatActivity {
 //        toggle.syncState();
         setSupportActionBar(navBarLayout);
 //        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
 
 
         navBarUserAvatar.setOnClickListener(new View.OnClickListener() {
@@ -235,6 +241,11 @@ public class PostActivity extends AppCompatActivity {
         postDbReference = dbReference.child("posts").child(postId); // points to the post
         commentsDbReference = postDbReference.child("comments"); // points to the comments of the post
         personalReference =dbReference.child("users").child(currUser.username).child("comments");
+        likesReference =dbReference.child("users").child(currUser.username).child("likes");
+//        likesReference.child(POSTID).setValue("-Mzxvh57q8aioVtBv8VZ");
+
+
+
 
         postValueEventListener = new ValueEventListener() {
             @Override
@@ -433,6 +444,7 @@ public class PostActivity extends AppCompatActivity {
     }
 
     private void like() {
+
         // Add or remove the user from `likes` based on whether the user
         // has liked this post before
         postDbReference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -441,9 +453,14 @@ public class PostActivity extends AppCompatActivity {
                 if (!snapshot.child("likes").hasChild(currUser.getUsername())) {
                     // If the current user has not liked this post
                     postDbReference.child("likes").child(currUser.getUsername()).setValue(currUser);
+                    likesReference.child(POSTID).removeValue();
+
                 } else {
                     // If the current user has already liked this post and want to dislike
                     postDbReference.child("likes").child(currUser.getUsername()).removeValue();
+                    likesReference.child(POSTID).setValue(POSTID);
+
+
                 }
             }
 
@@ -464,13 +481,20 @@ public class PostActivity extends AppCompatActivity {
                 // If the user had already liked this post
                 if (currentData.child("likes").child(currUser.getUsername()).getValue() != null) {
                     // Set the heart icon to black
-                    postLikes.getCompoundDrawables()[0].setTint(Color.BLACK);
+                    postLikes.getCompoundDrawables()[0].setTint(BLACK);
+                    likesReference.child(POSTID).removeValue();
+
                     // Decrement the like cnt
                     currentData.child("likeCnt").setValue(currLikeCnt - 1);
 
                 } else {
                     // Set the heart icon to red
-                    postLikes.getCompoundDrawables()[0].setTint(Color.RED);
+                    postLikes.getCompoundDrawables()[0].setTint(RED);
+                    likesReference.child(POSTID).setValue(POSTID);
+
+
+
+
                     // Increment the like cnt
                     currentData.child("likeCnt").setValue(currLikeCnt + 1);
                 }
@@ -482,10 +506,12 @@ public class PostActivity extends AppCompatActivity {
 
             }
         });
+
+
+
+
     }
-    public void setPostId(String id){
-        this.postId = id;
-    }
+
 
 
     private class FetchTrackTask implements Runnable {

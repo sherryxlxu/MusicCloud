@@ -5,5 +5,5 @@ import java.util.ArrayList;
 import edu.neu.madcourse.musicloud.comments.Comment;
 
 public interface ListCallBack {
-    void ListCallBack(ArrayList<Comment> commentArrayList, ArrayList<Posts>postsArrayList);
+    void songCallBack(String title, String content, String image);
 }

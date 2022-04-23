@@ -48,7 +48,7 @@ public class PostsFragment extends Fragment {
     private ArrayList<Comment> commentArrayList = new ArrayList<>();
     private Button playButton, pauseButton;
     private MediaPlayer mediaPlayer;
-    private ImageView songImage;
+    private String songImage;
     private TextView songTitle;
     private TextView songArtist;
 
@@ -66,14 +66,16 @@ public class PostsFragment extends Fragment {
         databaseReference = FirebaseDatabase.getInstance().getReference();
         commentDatabase = databaseReference.child("users").child(username).child("comments");
         postDatabase = databaseReference.child("posts");
-        getComment(new ListCallBack() {
-                       @Override
-                       public void ListCallBack(ArrayList<Comment> commentArrayList, ArrayList<Posts> postsArrayList) {
-                           recyclerViewAdapter.setItems(postsArrayList);
-
-
-                       }
-                   });
+//        getComment(new ListCallBack() {
+//                       @Override
+//                       public void ListCallBack(ArrayList<Comment> commentArrayList, ArrayList<Posts> postsArrayList) {
+//                           Log.e("Pa siza:",String.valueOf(postsArrayList.size()));
+//                           recyclerViewAdapter.setItems(postsArrayList);
+//
+//
+//                       }
+//                   });
+        getComment();
 //        commentDatabase.addValueEventListener(new ValueEventListener() {
 //            @Override
 //            public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -102,7 +104,6 @@ public class PostsFragment extends Fragment {
 //            Log.e("Comment:",comment.getContent());
 //            postsArrayList.add(new Posts(id,"The Weekend",comment.getContent(), R.drawable.cat));
 //            id+=1;
-//
 //        }
 
                 // Inflate the layout for this fragment
@@ -121,9 +122,8 @@ public class PostsFragment extends Fragment {
 
         recyclerView = view.findViewById(R.id.recycler_view);
         rLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerView.setLayoutManager(rLayoutManager);
+//        recyclerView.setLayoutManager(rLayoutManager);
         recyclerView.setHasFixedSize(false);
-//        Log.e("pa:",String.valueOf(postsArrayList.size()));
         recyclerViewAdapter = new RecyclerviewAdapter(postsArrayList);
         recyclerView.setAdapter(recyclerViewAdapter);
         recyclerView.setLayoutManager(new GridLayoutManager(view.getContext(),2));
@@ -175,7 +175,7 @@ public class PostsFragment extends Fragment {
     private void getPostId(User user){
 
     }
-    private void getComment(ListCallBack callBack){
+    private void getComment(){
         commentDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -189,7 +189,7 @@ public class PostsFragment extends Fragment {
                     commentArrayList.add(comment);
                 }
                 addPosts(commentArrayList,postsArrayList);
-                callBack.ListCallBack(commentArrayList,postsArrayList);
+//                callBack.ListCallBack(commentArrayList,postsArrayList);
 
 
             }
@@ -210,12 +210,13 @@ public class PostsFragment extends Fragment {
                 Log.e("Comment :", comment.getContent());
                 Log.e("Comment ID:", comment.getId());
                 String id = comment.getId();
-                getSongInfo(new itemCallBack() {
+                getSongInfo(id,new itemCallBack() {
                     @Override
                     public void songCallBack(String title, String image) {
-                        Picasso.get().load(image).into(songImage);
 
-                        postsArrayList.add(new Posts(comment.getId(), title, comment.getContent(), songImage));
+
+                        postsArrayList.add(new Posts(comment.getId(), title, comment.getContent(), image));
+                        recyclerViewAdapter.setItems(postsArrayList);
 
 
 
@@ -227,11 +228,12 @@ public class PostsFragment extends Fragment {
             }
         }
     }
-    private void getSongInfo(itemCallBack callBack){
+    private void getSongInfo(String id,itemCallBack callBack){
         postDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                Song song = snapshot.child("id").getValue(Song.class);
+                Song song = snapshot.child(id).child("song").getValue(Song.class);
+                Log.e("Song url:",song.getImg());
                 callBack.songCallBack(song.getTitle(),song.getImg());
 
             }
@@ -261,4 +263,3 @@ public class PostsFragment extends Fragment {
 
 
 
-}

@@ -11,5 +11,6 @@
     <color name="divider_gray">#C4C4C4</color>
     <color name="dark_gray">#ACABAB</color>
     <color name="button_blue">#4980FF</color>
+    <color name="red">#EC1000</color>
 
 </resources>

@@ -7,11 +7,11 @@ public class Posts {
     private String id;
     private String title;
     private String subContent;
-    private Drawable image;
+    private String image;
 
 
 
-    public Posts(String  id, String title, String subContent, Drawable image){
+    public Posts(String  id, String title, String subContent, String image){
         this.id = id;
         this.title = title;
         this.subContent=subContent;
@@ -27,7 +27,7 @@ public class Posts {
         return this.id;
     }
 
-    public Drawable getImage() {
+    public String getImage() {
         return this.image;
     }
 
